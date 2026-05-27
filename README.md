@@ -45,14 +45,16 @@ const API_KEY = "YOUR_API_KEY_HERE";
 ## 📁 PROJECT STRUCTURE
 SkyPulse-Weather/
 │
-├── index.html      # Main application file (UI + logic)
-├── assets/         # Images/screenshots (optional)
-└── README.md       # Documentation
+-├── index.html      # Main application file (UI + logic)
+-├── assets/         # Images/screenshots (optional)
+-└── README.md       # Documentation
+
 
 ## ⚙️ RUN LOCALLY
-git clone https://github.com/your-username/skypulse-weather.git
-cd skypulse-weather
-open index.html
+-git clone https://github.com/your-username/skypulse-weather.git
+-cd skypulse-weather
+-open index.html
+
 
 ## 🌈 HIGHLIGHTS
 - Animated gradient weather backgrounds  
@@ -64,15 +66,18 @@ open index.html
 - Interactive collapsible weather panels  
 - Temperature analytics chart (Chart.js)  
 
+
 ## 📊 DATA SOURCES
 - OpenWeatherMap Current Weather API  
 - OpenWeatherMap 5-Day Forecast API  
 - OpenWeatherMap Weather Map (Radar Layer)  
 
+
 ## ⚠️ NOTES
 - API key is exposed in frontend (demo only)  
 - Internet connection required for API requests and Chart.js CDN  
 - Weather accuracy depends on OpenWeatherMap data  
+
 
 ## 📌 FUTURE IMPROVEMENTS
 - 📍 Auto-detect user location  
@@ -82,9 +87,11 @@ open index.html
 - ⏱ Hourly forecast view  
 - 🔔 Push weather alerts  
 
+
 ## 👨‍💻 AUTHOR
 Anjali Kumari  
 GitHub: https://github.com/ianjalik23  
+
 
 ## 📜 LICENSE
 This project is licensed under the MIT License.

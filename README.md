@@ -37,10 +37,10 @@ https://your-live-demo-link.com
 ## 🔑 API SETUP
 1. Get API key: https://openweathermap.org/api  
 2. Replace this line in script:
-
 ```js
 const API_KEY = "YOUR_API_KEY_HERE";
 
+------
 
 ## 📁 PROJECT STRUCTURE
 SkyPulse-Weather/
@@ -49,48 +49,42 @@ SkyPulse-Weather/
 ├── assets/         # Images/screenshots (optional)
 └── README.md       # Documentation
 
-
 ## ⚙️ RUN LOCALLY
 git clone https://github.com/your-username/skypulse-weather.git
 cd skypulse-weather
 open index.html
 
-
 ## 🌈 HIGHLIGHTS
-Animated gradient weather backgrounds
-Dynamic theme switching based on weather
-Glassmorphism UI design
-Real-time weather updates using OpenWeatherMap API
-5-day forecast display
-Smart commute time suggestion
-Interactive collapsible weather panels
-Temperature analytics chart (Chart.js)
+- Animated gradient weather backgrounds  
+- Dynamic theme switching based on weather  
+- Glassmorphism UI design  
+- Real-time weather updates using OpenWeatherMap API  
+- 5-day forecast display  
+- Smart commute time suggestion  
+- Interactive collapsible weather panels  
+- Temperature analytics chart (Chart.js)  
 
+## 📊 DATA SOURCES
+- OpenWeatherMap Current Weather API  
+- OpenWeatherMap 5-Day Forecast API  
+- OpenWeatherMap Weather Map (Radar Layer)  
 
-##📊 DATA SOURCES
-OpenWeatherMap Current Weather API
-OpenWeatherMap 5-Day Forecast API
-OpenWeatherMap Weather Map (Radar Layer)
+## ⚠️ NOTES
+- API key is exposed in frontend (demo only)  
+- Internet connection required for API requests and Chart.js CDN  
+- Weather accuracy depends on OpenWeatherMap data  
 
+## 📌 FUTURE IMPROVEMENTS
+- 📍 Auto-detect user location  
+- 🌙 Dark mode toggle  
+- 🌐 Multi-language support  
+- 📱 PWA support (installable app)  
+- ⏱ Hourly forecast view  
+- 🔔 Push weather alerts  
 
-##⚠️ NOTES
-API key is exposed in frontend (demo only)
-Internet connection required for API requests and Chart.js CDN
-Weather accuracy depends on OpenWeatherMap data
-📌 FUTURE IMPROVEMENTS
-📍 Auto-detect user location
-🌙 Dark mode toggle
-🌐 Multi-language support
-📱 PWA support (installable app)
-⏱ Hourly forecast view
-🔔 Push weather alerts
-👨‍💻 AUTHOR
-
-## Author-
-Anjali Kumari
-GitHub: https://github.com/ianjalik23
+## 👨‍💻 AUTHOR
+Anjali Kumari  
+GitHub: https://github.com/ianjalik23  
 
 ## 📜 LICENSE
 This project is licensed under the MIT License.
-
-

@@ -37,7 +37,7 @@ https://your-live-demo-link.com
 ## 🔑 API SETUP
 1. Get API key: https://openweathermap.org/api  
 2. Replace this line in script:
-```js
+js
 const API_KEY = "YOUR_API_KEY_HERE";
 
 ---

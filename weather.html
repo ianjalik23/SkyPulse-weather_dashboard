@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkyPulse Weather</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI;
+}
+
+body{
+  min-height:100vh;
+  background: linear-gradient(-45deg,#4facfe,#00f2fe,#f6d365,#fda085);
+  background-size: 400% 400%;
+  animation: sky 10s ease infinite;
+  color:white;
+  padding:20px;
+  transition: all 0.8s ease;
+}
+
+@keyframes sky{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* WEATHER THEMES */
+body.sunny{background: linear-gradient(-45deg,#f6d365,#fda085,#ffd000,#ff8c00);}
+body.rainy{background: linear-gradient(-45deg,#2c3e50,#4ca1af,#1e3c72,#2a5298);}
+body.cloudy{background: linear-gradient(-45deg,#bdc3c7,#2c3e50,#95a5a6,#7f8c8d);}
+body.thunder{background: linear-gradient(-45deg,#0f0c29,#302b63,#24243e,#000000);}
+body.snow{background: linear-gradient(-45deg,#e0eafc,#cfdef3,#ffffff,#a1c4fd);}
+
+.container{
+  width:95%;
+  max-width:1100px;
+  margin:auto;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(25px);
+  border-radius:25px;
+  padding:20px;
+}
+
+h1{text-align:center;}
+
+.search{
+  display:flex;
+  gap:10px;
+  margin:15px 0;
+}
+
+input{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  outline:none;
+}
+
+button{
+  padding:12px 15px;
+  border:none;
+  border-radius:12px;
+  background:black;
+  color:white;
+  cursor:pointer;
+}
+
+.top{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.mainCard{
+  background:rgba(255,255,255,0.15);
+  padding:20px;
+  border-radius:18px;
+  text-align:center;
+}
+
+.temp{
+  font-size:65px;
+  font-weight:bold;
+}
+
+.infoGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.info{
+  background:rgba(255,255,255,0.15);
+  padding:12px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+.panel{
+  display:none;
+  font-size:12px;
+  margin-top:6px;
+}
+
+.forecast{
+  margin-top:15px;
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+}
+
+.day{
+  min-width:170px;
+  background:rgba(255,255,255,0.15);
+  padding:10px;
+  border-radius:12px;
+  text-align:center;
+  font-size:12px;
+}
+
+.radarBox{
+  margin-top:20px;
+  border-radius:15px;
+  overflow:hidden;
+  height:280px;
+}
+
+.chartBox{
+  margin-top:15px;
+  background:rgba(255,255,255,0.12);
+  padding:15px;
+  border-radius:15px;
+}
+
+canvas{height:220px !important;}
+
+#alert,#commute{
+  font-size:12px;
+  margin-top:6px;
+}
+
+@media(max-width:768px){
+  .top{grid-template-columns:1fr;}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌦 SkyPulse Weather</h1>
+
+<div class="search">
+<input id="city" placeholder="Enter city">
+<button onclick="getWeather()">Search</button>
+</div>
+
+<div class="top">
+
+<div class="mainCard">
+<div id="place">Search city...</div>
+<div id="date"></div>
+<div class="temp" id="temp">--°C</div>
+<div id="condition"></div>
+</div>
+
+<div class="infoGrid">
+
+<div class="info" onclick="toggle('windP')">🌬 Wind
+<div id="wind"></div>
+<div class="panel" id="windP"></div>
+</div>
+
+<div class="info" onclick="toggle('humP')">💧 Humidity
+<div id="humidity"></div>
+<div class="panel" id="humP"></div>
+</div>
+
+<div class="info" onclick="toggle('feelP')">🌡 Feels
+<div id="feels"></div>
+<div class="panel" id="feelP"></div>
+</div>
+
+<div class="info" onclick="toggle('commuteP')">🚗 Commute
+<div id="commute"></div>
+<div class="panel" id="commuteP"></div>
+</div>
+
+<div class="info" onclick="toggle('alertP')">⚡ Alert
+<div id="alert"></div>
+<div class="panel" id="alertP"></div>
+</div>
+
+</div>
+
+</div>
+
+<h3 style="margin-top:15px;">5-Day Forecast</h3>
+<div class="forecast" id="forecast"></div>
+
+<div class="chartBox">
+<h3>Temperature Analytics</h3>
+<canvas id="chart"></canvas>
+</div>
+
+<h3 style="margin-top:15px;">Radar</h3>
+<div class="radarBox">
+<iframe width="100%" height="280"
+src="https://openweathermap.org/weathermap?basemap=map&cities=false&layer=precipitation&lat=20&lon=78&zoom=5"></iframe>
+</div>
+
+</div>
+
+<script>
+
+const API_KEY = "a9fde7ca8644d24673ebef7d59c3a776";
+
+let chart;
+
+function setTheme(w){
+
+document.body.classList.remove("sunny","rainy","cloudy","thunder","snow");
+
+if(w.includes("rain")) document.body.classList.add("rainy");
+else if(w.includes("cloud")) document.body.classList.add("cloudy");
+else if(w.includes("thunder")) document.body.classList.add("thunder");
+else if(w.includes("snow")) document.body.classList.add("snow");
+else document.body.classList.add("sunny");
+
+}
+
+document.getElementById("date").innerText =
+new Date().toLocaleDateString("en-US",{
+  month:"long",
+  day:"numeric",
+  year:"numeric"
+});
+
+function toggle(id){
+  let el=document.getElementById(id);
+  el.style.display = el.style.display==="block"?"none":"block";
+}
+
+function getWindDirection(deg){
+  if(deg === undefined || deg === null) return "No data";
+
+  const dirs = [
+    "North","North-East","East","South-East",
+    "South","South-West","West","North-West"
+  ];
+
+  return dirs[Math.round(deg / 45) % 8];
+}
+
+function formatTime(hour){
+  hour = Number(hour);
+  let ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12;
+  if(hour === 0) hour = 12;
+  return hour + ":00 " + ampm;
+}
+
+document.getElementById("city").addEventListener("keydown",e=>{
+  if(e.key==="Enter") getWeather();
+});
+
+async function getWeather(){
+
+let city=document.getElementById("city").value;
+
+if(!city){
+  document.getElementById("place").innerText="Enter city";
+  return;
+}
+
+let res=await fetch(
+`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
+);
+
+let data=await res.json();
+
+if(data.cod !== 200){
+  document.getElementById("place").innerText="❌ "+data.message;
+  return;
+}
+
+process(data);
+
+}
+
+async function process(data){
+
+let temp=data.main.temp;
+let w=data.weather[0].main.toLowerCase();
+
+setTheme(w);
+
+document.getElementById("place").innerText =
+data.name+", "+data.sys.country;
+
+document.getElementById("temp").innerText =
+Math.round(temp)+"°C";
+
+let mood="☀ Sunny";
+if(w.includes("rain"))mood="🌧 Rainy";
+else if(w.includes("cloud"))mood="☁ Cloudy";
+else if(w.includes("thunder"))mood="⚡ Thunderstorm ⚡";
+else if(w.includes("snow"))mood="❄ Chill ❄";
+
+document.getElementById("condition").innerText =
+data.weather[0].main+" ("+mood+")";
+
+document.getElementById("wind").innerText =
+data.wind.speed+" km/h";
+
+document.getElementById("humidity").innerText =
+data.main.humidity+"%";
+
+document.getElementById("feels").innerText =
+data.main.feels_like+"°C";
+
+/* WIND */
+document.getElementById("windP").innerHTML=
+`
+Speed: ${data.wind.speed} km/h<br>
+Direction: ${getWindDirection(data.wind.deg)}<br>
+Gust: ${data.wind.gust || "No data"}
+`;
+
+/* HUMIDITY */
+document.getElementById("humP").innerHTML=
+`
+Humidity: ${data.main.humidity}%<br>
+Precipitation: ${Math.round((data.pop || 0)*100)}%
+`;
+
+/* FEELS */
+document.getElementById("feelP").innerHTML=
+`
+Feels Like: ${data.main.feels_like}°C<br>
+Temperature: ${data.main.temp}°C<br>
+Pressure: ${data.main.pressure} hPa<br>
+Humidity Impact: ${data.main.humidity}%
+`;
+
+let cityName=data.name;
+
+let f=await fetch(
+`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${API_KEY}&units=metric`
+);
+
+let d=await f.json();
+
+let box=document.getElementById("forecast");
+box.innerHTML="";
+
+let labels=[],temps=[];
+
+let rainRisk=0;
+let storm=false;
+let bestTime="Now";
+let bestRisk=1;
+
+d.list.slice(0,8).forEach(x=>{
+
+rainRisk=Math.max(rainRisk,x.pop||0);
+
+let w=x.weather[0].main.toLowerCase();
+
+if(w.includes("thunder")) storm=true;
+
+if((x.pop||0)<bestRisk){
+bestRisk=x.pop||0;
+bestTime=formatTime(new Date(x.dt_txt).getHours());
+}
+
+});
+
+/* 🚗 COMMUTE RESTORED */
+document.getElementById("commute").innerText=
+`Best Time: ${bestTime}`;
+
+document.getElementById("commuteP").innerHTML=
+`
+Best Time to Leave: ${bestTime}<br>
+Rain Chance: ${Math.round(rainRisk*100)}%<br>
+Storm: ${storm ? "⚡ Thunderstorm ⚡" : "🌤 Safe"}
+`;
+
+/* ⚡ ALERT RESTORED */
+document.getElementById("alert").innerText=
+`${Math.round(rainRisk*100)}% Rain`;
+
+document.getElementById("alertP").innerHTML=
+`
+Rain Chance: ${Math.round(rainRisk*100)}%<br>
+Storm: ${storm ? "⚡ Thunderstorm ⚡" : "No Storm"}
+`;
+
+/* 🌤 5-DAY FORECAST FULL RESTORED */
+d.list
+.filter(i=>i.dt_txt.includes("12:00:00"))
+.slice(0,5)
+.forEach(x=>{
+
+let date=new Date(x.dt_txt);
+let temp=x.main.temp;
+let w=x.weather[0].main.toLowerCase();
+
+let rain=Math.round((x.pop||0)*100);
+let cloud=Math.round(x.clouds?.all||0);
+let thunder=w.includes("thunder");
+let chilly=temp <= 18;
+
+let icon="☀";
+if(w.includes("rain"))icon="🌧";
+else if(w.includes("cloud"))icon="☁";
+else if(thunder)icon="⚡";
+else if(chilly)icon="❄";
+
+labels.push(date.toDateString().slice(0,3));
+temps.push(temp);
+
+box.innerHTML+=`
+<div class="day">
+<h4>${date.toDateString().slice(0,3)}</h4>
+
+<p>${icon} ${x.weather[0].main}</p>
+<p>🌡 ${Math.round(temp)}°C</p>
+<p>🌧 ${rain}% | ☁ ${cloud}%</p>
+<p>${thunder ? "⚡ Thunder" : ""} ${chilly ? "❄ Chill" : ""}</p>
+
+</div>`;
+});
+
+renderChart(labels,temps);
+
+}
+
+function renderChart(l,t){
+
+if(chart) chart.destroy();
+
+chart=new Chart(document.getElementById("chart"),{
+type:"line",
+data:{
+labels:l,
+datasets:[{
+data:t,
+borderColor:"white",
+fill:false
+}]
+},
+options:{
+plugins:{legend:{display:false}},
+scales:{
+x:{ticks:{color:"white"}},
+y:{ticks:{color:"white"}}
+}
+}
+});
+
+}
+
+</script>
+
+</body>
+</html>

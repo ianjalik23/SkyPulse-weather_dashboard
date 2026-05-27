@@ -43,17 +43,24 @@ const API_KEY = "YOUR_API_KEY_HERE";
 ---
 
 ## 📁 PROJECT STRUCTURE
+
+```bash
 SkyPulse-Weather/
 │
 ├── index.html      # Main application file (UI + logic)
 ├── assets/         # Images/screenshots (optional)
 └── README.md       # Documentation
-
+```
 
 ## ⚙️ RUN LOCALLY
+
+```bash
 git clone https://github.com/your-username/skypulse-weather.git
+
 cd skypulse-weather
+
 open index.html
+```
 
 ## 🌈 HIGHLIGHTS
 - Animated gradient weather backgrounds  

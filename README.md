@@ -40,7 +40,7 @@ https://your-live-demo-link.com
 ```js
 const API_KEY = "YOUR_API_KEY_HERE";
 
-------
+---
 
 ## 📁 PROJECT STRUCTURE
 SkyPulse-Weather/

@@ -21,7 +21,7 @@ It uses the OpenWeatherMap API and Chart.js to deliver interactive weather visua
 
 
 ## 🚀 LIVE DEMO
-https://your-live-demo-link.com
+https://ianjalik23.github.io/SkyPulse-weather_dashboard/
 
 ---
 

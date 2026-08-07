@@ -91,7 +91,7 @@ open index.html
 - 🌐 Multi-language support  
 - 📱 PWA support (installable app)  
 - ⏱ Hourly forecast view  
-- 🔔 Push weather alerts
+- 🔔 Push weather alerts 
 
 
 ## 👨‍💻 AUTHOR
